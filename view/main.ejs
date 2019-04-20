@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <script src="/socket.io/socket.io.js"></script>
+</head>
+<style>
+    input {
+        outline: none;
+    }
+
+    button {
+        outline: none;
+        border: none;
+    }
+
+    .chat {
+        width: 300px;
+        height: 400px;
+        background-color: #9abbd3;
+        overflow: scroll;
+    }
+
+    .chatList {
+        border-radius: 30px;
+        background-color: #fce701;
+        display: block;
+    }
+
+    .msg {
+        width: 250px;
+        height: 40px;
+        padding: 0;
+        margin: 0;
+        border: 1px;
+        list-style: none;
+        text-align: left;
+    }
+
+    .send {
+        width: 46px;
+        height: 40px;
+        margin: 0;
+        padding: 0;
+        top: 0;
+        left: 0;
+        background-color: #fce701;
+        list-style: none;
+    }
+</style>
+
+<body>
+    <h1>Main Page입니다.</h1>
+    <p> <%= msg %> </p>
+
+    <input type="text" id="nickname">
+    <button id="btnChange">닉네임 변경</button><br>
+
+    <div class="chat">
+        <div id="chatList" class="chatList">
+        </div>
+    </div>
+    <input type="text" id="msg" class="msg" placeholder="please input text">
+    <button id="btnSend" class="send"> 전송</button>
+    <script>
+        let socket = io();
+        let msgInput = document.querySelector("#msg");
+        let btn = document.querySelector("#btnSend");
+        let chatList = document.querySelector("#chatList");
+        let changeBtn = document.querySelector("#btnChange");
+        let nickInput = document.querySelector("#nickname");
+        changeBtn.addEventListener("click", () => {
+            let nick = nickInput.value;
+            socket.emit('change', { name: nick });
+        });
+        btn.addEventListener("click", () => {
+            let msg = msgInput.value;
+            socket.emit('gondr', { text: msg });
+        });
+        socket.on('server-msg', (data) => {
+            let msgDiv = document.createElement("div");
+            msgDiv.innerHTML = data.text;
+            chatList.appendChild(msgDiv);
+        });
+    </script>
+</body>
+
+</html>
